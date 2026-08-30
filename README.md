@@ -38,6 +38,20 @@ flowchart TD
 
 The public repository intentionally documents interfaces and experimental results at a high level. Implementation details that may affect future IP strategy are not published by default.
 
+## Ecosystem strategy
+
+The project is **model- and vendor-agnostic by design**.
+
+LeRobot is currently being used as an interoperability target because it provides an open hardware interface and a standardized dataset format for robot-learning workflows. MolmoAct 2 is one candidate policy that can operate within that ecosystem; it is not a required dependency or the core of the product architecture.
+
+The project should preserve the ability to:
+- run deterministic local control without any learned policy;
+- evaluate multiple learned policies over time;
+- export experiment data to common open formats;
+- change model providers without redesigning the physical embodiment interface.
+
+See [`docs/interoperability.md`](docs/interoperability.md).
+
 ## V0 hardware categories
 
 The first prototype remains modular and inexpensive. Current hardware categories include:
@@ -93,7 +107,9 @@ Once the hardware is repeatable, test whether different higher-level interaction
 
 Only sanitized, non-sensitive experimental data will be published.
 
-The public schema is defined in [`data/schema.md`](data/schema.md). Raw conversational content, identifying biometric data, private relationship data, secrets, calibration files that expose unpublished control methods, and any intentionally withheld implementation details are excluded from the public repository.
+The public schema is defined in [`data/schema.md`](data/schema.md). The schema is intentionally **LeRobot-aware without being LeRobot-dependent**: episode/frame structure, observations, actions, timestamps, and task annotations are preserved so later conversion into LeRobotDataset v3 or another learning stack does not require discarding the original experiment record.
+
+Raw conversational content, identifying biometric data, private relationship data, secrets, calibration files that expose unpublished control methods, and intentionally withheld implementation details are excluded from the public repository.
 
 ## Success criteria
 
@@ -102,8 +118,9 @@ V0 succeeds if it can:
 - repeatably detect relevant contact events;
 - execute repeatable bounded motor responses;
 - characterize and safely regulate one thermal zone;
-- log raw or normalized sensor observations, event labels, requested responses, executed responses, and safety interventions;
-- preserve a clean boundary between higher-level agent behavior and local safety enforcement.
+- log observations, event labels, requested responses, executed responses, and safety interventions;
+- preserve a clean boundary between higher-level agent behavior and local safety enforcement;
+- preserve enough episode/frame structure to support later export into standard robot-learning datasets.
 
 ## Prior art and related work
 
@@ -117,11 +134,13 @@ Relevant work includes:
   https://www.nature.com/articles/s44460-026-00097-1
 - Del Dottore et al. (2026), distributed local reflex-like behavior in an octopus-inspired arm  
   https://doi.org/10.1038/s42256-026-01230-y
-- Ai2 MolmoAct 2, open action-reasoning models and tooling for robot adaptation  
+- Hugging Face LeRobot, open robotics interfaces, datasets, and policy tooling  
+  https://huggingface.co/docs/lerobot
+- Ai2 MolmoAct 2, one open action-reasoning policy available through LeRobot  
   https://allenai.org/blog/molmoact2  
   https://github.com/allenai/molmoact2
 
-MolmoAct 2 is not part of the V0 fast reflex or safety loop. Learned embodied models may be evaluated later at a higher policy layer.
+MolmoAct 2 is not part of the V0 fast reflex or safety loop. Learned embodied models may be evaluated later at a higher policy layer, and the project is not committed to a single policy family.
 
 ## Why build in public
 
@@ -138,6 +157,7 @@ A public repository provides a timestamped, inspectable record of the research q
 │   └── schema.md
 └── docs/
     ├── experiment-v0.md
+    ├── interoperability.md
     └── safety.md
 ```
 
