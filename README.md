@@ -8,7 +8,7 @@ The first prototype is intentionally small: a benchtop human-touch reflex rig us
 
 **Can an embodied system detect and characterize human-directed physical contact, produce an immediate bounded bodily response, and preserve a semantic account of the interaction for higher-level AI reasoning?**
 
-A later research direction will examine whether higher-level interaction context can alter social responses while universal safety constraints remain unchanged.
+A later research direction will examine whether higher-level interaction context — including authenticated identity signals and conservatively represented physiological measurements — can alter social responses while universal safety constraints remain unchanged.
 
 ## Working thesis
 
@@ -30,6 +30,7 @@ flowchart TD
 
     E[Higher-level agent] -->|restricted semantic requests| C
     F[Immutable safety limits] --> C
+    H[Sanitized identity / context / physiology] --> E
 
     B --> G[Structured event log]
     C --> G
@@ -65,21 +66,24 @@ The first prototype remains modular and inexpensive. Current hardware categories
 - breadboard / wiring / passive components
 - an existing educational motor rig for a single-axis reflex
 
+Wearable signals are treated as a separate higher-level context source rather than part of the V0 reflex hardware.
+
 Exact component selection, calibration values, thresholds, and control tuning may change during characterization.
 
 ## Safety principles
 
-1. **Safety is invariant.** Identity, relationship, and conversation context must never weaken physical safety limits.
+1. **Safety is invariant.** Identity, relationship, conversation context, and physiological measurements must never weaken physical safety limits.
 2. **No unrestricted model actuation.** High-level AI output is translated through a restricted interface before local execution.
 3. **Fail safe locally.** Sensor failure, controller fault, invalid commands, or communication loss must resolve to a safe state without depending on a cloud model.
-4. **Interpret physical signals conservatively.** Physical measurements are not treated as proof of social intent.
+4. **Interpret physical and physiological signals conservatively.** Measurements are not treated as proof of social intent, emotion, diagnosis, or medical state.
 5. **Thermal testing begins off-body.** Human-contact heating occurs only after measured regulation and independent protection are demonstrated.
 6. **Identity is multimodal and confidence-based.** No single proximity, possession, biometric, or behavioral signal should automatically establish full identity or authorization.
 7. **Proximity is not authentication.** A nearby wearable, phone, or similar device may contribute to identity confidence but must not, by itself, unlock sensitive personal context, privileged robot behaviors, configuration changes, or account-level actions.
-8. **Conversation stays out of the low-level controller.** Raw conversation logs are not forwarded to embedded control hardware.
-9. **Requested and executed behavior are logged separately.** Safety clamps and substitutions must be visible in the data.
+8. **Physiology may inform appropriateness, not safety authority.** Heart rate or other wearable measurements may inform higher-level response selection, but they do not change actuator limits or bypass local safety.
+9. **Conversation stays out of the low-level controller.** Raw conversation logs are not forwarded to embedded control hardware.
+10. **Requested and executed behavior are logged separately.** Safety clamps and substitutions must be visible in the data.
 
-See [`docs/safety.md`](docs/safety.md) for the current public safety boundary.
+See [`docs/safety.md`](docs/safety.md) for the current public safety boundary and [`docs/research-principles.md`](docs/research-principles.md) for the project-wide research rules.
 
 ## Planned V0 experiment
 
@@ -101,7 +105,7 @@ Expose structured physical-interaction events to a higher-level agent and accept
 
 ### Later extension — context-sensitive behavior
 
-Once the hardware is repeatable, test whether different higher-level interaction contexts can produce measurably different but equally safe physical behavior.
+Once the hardware is repeatable, test whether higher-level interaction context — potentially including identity confidence, interaction context, and conservatively represented physiological measurements — can produce measurably different but equally safe physical behavior.
 
 ## Public data strategy
 
@@ -109,7 +113,9 @@ Only sanitized, non-sensitive experimental data will be published.
 
 The public schema is defined in [`data/schema.md`](data/schema.md). The schema is intentionally **LeRobot-aware without being LeRobot-dependent**: episode/frame structure, observations, actions, timestamps, and task annotations are preserved so later conversion into LeRobotDataset v3 or another learning stack does not require discarding the original experiment record.
 
-Raw conversational content, identifying biometric data, private relationship data, secrets, calibration files that expose unpublished control methods, and intentionally withheld implementation details are excluded from the public repository.
+Raw conversational content, identifying biometric data, device identifiers, private relationship data, secrets, calibration files that expose unpublished control methods, and intentionally withheld implementation details are excluded from the public repository.
+
+Physiological measurements are optional context fields. They should be minimized, timestamped, and interpreted conservatively. Missing values remain `null`; physiological measurements must not be converted into unsupported emotional or medical labels.
 
 ## Success criteria
 
@@ -158,6 +164,7 @@ A public repository provides a timestamped, inspectable record of the research q
 └── docs/
     ├── experiment-v0.md
     ├── interoperability.md
+    ├── research-principles.md
     └── safety.md
 ```
 

@@ -1,10 +1,10 @@
 # Public Data Schema
 
-Version: **0.2**
+Version: **0.3**
 
 This schema defines the minimum structured record for public V0 experiment data.
 
-Version 0.2 changes the collection model from a custom event log toward an **episode/frame structure that can be exported into LeRobotDataset v3 or another robot-learning dataset later**. It does not require LeRobot at collection time.
+Version 0.3 adds optional, conservatively represented **physiological context** while preserving the episode/frame structure introduced in version 0.2. Physiological fields are higher-level context only; they are not part of the local safety layer and are not emotional or medical labels.
 
 ## Design goals
 
@@ -14,6 +14,7 @@ Version 0.2 changes the collection model from a custom event log toward an **epi
 - Preserve the distinction between **requested behavior** and **executed behavior**.
 - Keep safety/audit information even when a downstream ML format does not have a native field for it.
 - Allow natural-language task annotations without storing private conversation.
+- Allow optional identity and physiological context without conflating either with authorization, emotion, or diagnosis.
 - Use pseudonymous participant identifiers only.
 - Missing data should be `null`, not `0`.
 
@@ -28,10 +29,10 @@ For future compatibility, the canonical V0 record keeps these concepts:
 | `episode_index` | episode grouping / metadata |
 | `frame_index` | frame order inside an episode |
 | `timestamp` | frame time in seconds |
-| `observation.state` | numeric sensor/state vector |
+| `observation.state` | numeric embodiment sensor/state vector |
 | `action` | numeric action representation once defined |
 | `task` | natural-language task annotation |
-| audit/safety fields | retained as project-specific auxiliary features or sidecar analysis data |
+| context / audit / safety fields | retained as project-specific auxiliary features or sidecar analysis data |
 
 The exact numeric `action` representation is **not frozen yet**. V0 continues to log semantic requested/executed responses separately until the hardware-policy boundary is tested.
 
@@ -39,7 +40,7 @@ The exact numeric `action` representation is **not frozen yet**. V0 continues to
 
 ```json
 {
-  "schema_version": "0.2",
+  "schema_version": "0.3",
   "record_type": "frame",
 
   "episode_index": 0,
@@ -71,7 +72,16 @@ The exact numeric `action` representation is **not frozen yet**. V0 continues to
   "context": {
     "identity_class": "not_tested",
     "identity_confidence": null,
-    "interaction_context": null
+    "interaction_context": null,
+
+    "physiology": {
+      "heart_rate_bpm": null,
+      "resting_heart_rate_bpm": null,
+      "heart_rate_delta_bpm": null,
+      "recent_activity": null,
+      "measurement_age_s": null,
+      "source_class": null
+    }
   },
 
   "policy": {
@@ -118,19 +128,48 @@ The exact numeric `action` representation is **not frozen yet**. V0 continues to
 
 ## Observation fields
 
-`observation.state` is the canonical home for numeric embodiment observations.
+`observation.state` is the canonical home for numeric **embodiment** observations.
 
 Current V0 candidates:
 
 - capacitance
 - force
 - force rate
-- measured temperature
+- measured surface temperature
 - contact duration
 
-Field names and units must be documented before a released dataset is treated as stable.
+Wearable heart rate is intentionally stored under `context.physiology`, not mixed into local embodiment state, because it is higher-level user context rather than a safety-critical patch measurement.
 
 Derived event labels remain separate from raw/numeric state so that later classifiers can be retrained without losing the original measurements.
+
+## Context fields
+
+Context is optional and should be minimized.
+
+### Identity
+
+- `context.identity_class` — coarse experimental identity class such as `primary_user`, `known_other`, `unknown`, or `not_tested`
+- `context.identity_confidence` — optional confidence on a documented scale
+- `context.interaction_context` — sanitized experimental context label, never raw conversation
+
+Identity confidence is not authorization.
+
+### Physiology
+
+`context.physiology` may contain:
+
+| Field | Type | Description |
+|---|---|---|
+| `heart_rate_bpm` | number/null | Recent measured heart rate in beats per minute. |
+| `resting_heart_rate_bpm` | number/null | Available resting-heart-rate baseline from the same context source. |
+| `heart_rate_delta_bpm` | number/null | Numeric difference from the available resting baseline, if computed. |
+| `recent_activity` | string/null | Coarse, factual activity state if directly available; otherwise `null`. |
+| `measurement_age_s` | number/null | Age of the physiological measurement when used by the agent. |
+| `source_class` | string/null | Coarse source class such as `wearable`; do not publish persistent hardware identifiers. |
+
+These fields are measurements and provenance. They are **not** labels for anxiety, stress, excitement, affection, illness, or any other emotional/medical interpretation.
+
+If a source does not provide a value, store `null`. Do not substitute zero.
 
 ## Action fields
 
@@ -166,7 +205,8 @@ Avoid:
 - raw chat transcripts
 - intimate conversation excerpts
 - names
-- inferred emotional claims presented as facts
+- emotional-state labels inferred from physiology
+- medical conclusions inferred from wearable measurements
 
 If later tooling supports richer persistent/event language annotations, those should remain sanitized semantic labels.
 
@@ -183,6 +223,7 @@ If later tooling supports richer persistent/event language annotations, those sh
 - response timing
 - safety interventions
 - experimental condition labels
+- minimized physiological measurements when required by the experiment and explicitly reviewed for release
 
 ### Keep private by default
 
@@ -194,6 +235,8 @@ If later tooling supports richer persistent/event language annotations, those sh
 - private relationship content
 - authentication tokens
 - API keys
+- unnecessary physiological history
+- raw wearable exports
 - unpublished calibration thresholds
 - unpublished control gains or tuning values
 - exact mappings intentionally withheld for IP review
@@ -223,6 +266,12 @@ event_confidence
 identity_class
 identity_confidence
 interaction_context
+heart_rate_bpm
+resting_heart_rate_bpm
+heart_rate_delta_bpm
+recent_activity
+physiology_measurement_age_s
+physiology_source_class
 requested_response
 executed_response
 latency_s

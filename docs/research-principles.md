@@ -6,7 +6,7 @@ These principles are intended to keep the work safe, interpretable, portable acr
 
 ## 1. Safety remains local and invariant
 
-Safety-critical behavior must not depend on model identity, conversational context, relationship context, or cloud connectivity.
+Safety-critical behavior must not depend on model identity, conversational context, relationship context, physiological measurements, or cloud connectivity.
 
 The local system owns physical limits such as:
 
@@ -73,27 +73,48 @@ Any clamp, substitution, rejection, timeout, or safe-state transition should be 
 
 This distinction is necessary for both safety auditing and later policy evaluation.
 
-## 6. Do not infer social or emotional meaning from physical signals alone
+## 6. Do not infer social, emotional, or medical meaning from measurements alone
 
-Physical measurements should be described as physical measurements.
+Physical and physiological measurements should be described as measurements.
 
 For example:
 
 - high force is not automatically aggression;
 - sustained touch is not automatically affection;
-- physiological data is not automatically emotional state.
+- elevated heart rate is not automatically anxiety, fear, excitement, illness, or any other single state;
+- low or high physiological values are not diagnoses.
 
-Higher-level interpretation may be studied separately, but raw sensor signals should not be labeled with unsupported social meaning.
+Higher-level interpretation may be studied separately, but raw measurements should not be relabeled as unsupported social, emotional, or medical facts.
 
-## 7. Context should be semantic and minimal
+When physiological data is supplied to a higher-level agent, it should be represented with provenance and freshness information where practical, such as the measurement value, relevant baseline, and measurement age.
 
-Low-level embedded systems should not receive raw private conversation logs.
+## 7. Physiology may inform response appropriateness, not safety authority
 
-When conversational or relational context is needed for an experiment, it should be represented as a compact, sanitized semantic state sufficient for the task.
+Wearable measurements may be used as one source of higher-level interaction context.
 
-Public datasets should not contain intimate conversation, identifying private context, or unnecessary personal information.
+For example, an agent may choose a calmer or less intrusive response when a measurement is notably different from a known baseline, while remaining explicitly uncertain about why.
 
-## 8. Public work should prove progress without automatically disclosing every mechanism
+Physiological context must not:
+
+- weaken thermal, force, motion, current, or power limits;
+- directly command actuators;
+- serve as proof of emotional state;
+- serve as proof of identity;
+- silently trigger medical conclusions.
+
+The safe response vocabulary remains bounded by the local controller regardless of physiological context.
+
+## 8. Context should be semantic and minimal
+
+Low-level embedded systems should not receive raw private conversation logs or unnecessary wearable history.
+
+When conversational, relational, identity, or physiological context is needed for an experiment, it should be represented as a compact, sanitized state sufficient for the task.
+
+Public datasets should not contain intimate conversation, identifying private context, unnecessary health history, or persistent device identifiers.
+
+Missing measurements should be represented as unavailable or `null`, not as zero.
+
+## 9. Public work should prove progress without automatically disclosing every mechanism
 
 The public repository should document:
 
@@ -112,7 +133,7 @@ Before publishing, ask:
 
 > Does this commit primarily prove progress, or does it reveal a differentiating mechanism?
 
-## 9. Reproducibility requires versioning
+## 10. Reproducibility requires versioning
 
 Every experiment should eventually identify the versions that could affect its outcome, including:
 
@@ -122,30 +143,32 @@ Every experiment should eventually identify the versions that could affect its o
 - experiment protocol version;
 - sensor configuration;
 - relevant model or policy version;
-- adapter/exporter version where applicable.
+- adapter/exporter version where applicable;
+- context-source version where context materially affects the trial.
 
 A result without enough provenance to reconstruct its setup should not be treated as a strong result.
 
-## 10. Negative results are results
+## 11. Negative results are results
 
-Failed hypotheses, noisy sensors, poor classifiers, unstable thermal behavior, confusing interaction mappings, and safety interventions should be recorded rather than hidden.
+Failed hypotheses, noisy sensors, poor classifiers, unstable thermal behavior, confusing interaction mappings, stale or missing context data, and safety interventions should be recorded rather than hidden.
 
 The goal is not to produce a sequence of polished demonstrations. The goal is to reduce uncertainty and learn which embodiment mechanisms are actually useful.
 
-## 11. Claims should remain narrower than the evidence
+## 12. Claims should remain narrower than the evidence
 
 The project may describe:
 
 - persistent agents;
 - context-sensitive behavior;
 - identity-aware interaction;
+- physiologically informed response selection;
 - agent-selected or policy-selected responses;
 - learned or deterministic control;
 - perceived intentionality or responsiveness when measured.
 
-The project should not present consciousness, subjective feeling, personhood, or autonomous consent as engineering facts unless there is evidence that supports those claims.
+The project should not present consciousness, subjective feeling, personhood, autonomous consent, emotional-state inference, or medical interpretation as engineering facts unless there is evidence that supports those claims.
 
-## 12. Human testing should be deliberate
+## 13. Human testing should be deliberate
 
 Human-contact experiments should use explicit procedures and stopping conditions.
 
@@ -156,15 +179,18 @@ As the work progresses, protocols should address:
 - thermal and mechanical stopping rules;
 - exclusion criteria where relevant;
 - incident logging;
+- collection and retention of wearable/physiological data where applicable;
 - whether formal ethics or institutional review is appropriate for the intended study or publication context.
 
-## 13. Security-sensitive identity data stays separate
+## 14. Security-sensitive identity and physiological data stay separate
 
-Biometric templates, wearable identifiers, credentials, authentication secrets, and private recognition data should not be placed in ordinary public logs.
+Biometric templates, wearable identifiers, credentials, authentication secrets, private recognition data, and unnecessary physiological history should not be placed in ordinary public logs.
 
 Identity research data should be minimized, pseudonymized where possible, and separated from authorization credentials.
 
-## 14. The prototype should remain smaller than the thesis
+Physiological context should be collected only at the resolution needed for the experiment and should not become a general-purpose health record.
+
+## 15. The prototype should remain smaller than the thesis
 
 V0 exists to test one narrow embodiment question at a time.
 
