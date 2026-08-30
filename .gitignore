@@ -1,0 +1,37 @@
+# Secrets
+.env
+.env.*
+*.pem
+*.key
+secrets/
+credentials/
+
+# Private / raw data
+data/raw/
+data/private/
+data/internal/
+*.private.json
+*.private.csv
+*.secret.json
+
+# Calibration / tuning files kept private by default
+calibration/private/
+config/private/
+*tuning-private*
+*thresholds-private*
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+
+# Platform/editor
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# Logs
+*.log
+logs/
