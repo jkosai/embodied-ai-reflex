@@ -17,6 +17,22 @@ The local controller owns:
 
 These limits do not change based on identity, relationship, conversational state, or model output.
 
+## Identity and authorization
+
+Recognition and authorization are separate concepts.
+
+A system may estimate who is interacting using multiple signals, but **recognition confidence does not automatically grant privileges**.
+
+Public design principles:
+
+- **Proximity is not authentication.** A nearby watch, phone, or other possession-based signal may contribute evidence, but must not by itself grant sensitive access.
+- **No single signal is definitive.** Touch characteristics, wearable proximity, face, voice, or future credential mechanisms should be treated as inputs to a confidence-based identity process rather than as automatic proof.
+- **Possession does not imply identity.** Another person wearing or carrying the primary user's device must not inherit the primary user's privileged access.
+- **Social personalization and security authorization are separate.** The system may allow low-risk personalized behavior at a lower confidence threshold than it allows private-context access, configuration changes, account actions, or other privileged functions.
+- **Identity uncertainty should degrade safely.** If identity confidence drops, privileged behavior should reduce or stop rather than silently remain unlocked.
+
+Specific multimodal fusion logic, thresholds, credential methods, and authorization policies are intentionally not specified in the public repository at this stage.
+
 ## Agent permissions
 
 A higher-level agent may request only approved semantic responses from a bounded vocabulary. It may not directly set unrestricted actuator values.

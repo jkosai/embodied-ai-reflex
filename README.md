@@ -60,9 +60,10 @@ Exact component selection, calibration values, thresholds, and control tuning ma
 3. **Fail safe locally.** Sensor failure, controller fault, invalid commands, or communication loss must resolve to a safe state without depending on a cloud model.
 4. **Interpret physical signals conservatively.** Physical measurements are not treated as proof of social intent.
 5. **Thermal testing begins off-body.** Human-contact heating occurs only after measured regulation and independent protection are demonstrated.
-6. **Identity is not inferred from touch alone.** Any future person-specific behavior should rely on explicit or authenticated identity signals with uncertainty represented.
-7. **Conversation stays out of the low-level controller.** Raw conversation logs are not forwarded to embedded control hardware.
-8. **Requested and executed behavior are logged separately.** Safety clamps and substitutions must be visible in the data.
+6. **Identity is multimodal and confidence-based.** No single proximity, possession, biometric, or behavioral signal should automatically establish full identity or authorization.
+7. **Proximity is not authentication.** A nearby wearable, phone, or similar device may contribute to identity confidence but must not, by itself, unlock sensitive personal context, privileged robot behaviors, configuration changes, or account-level actions.
+8. **Conversation stays out of the low-level controller.** Raw conversation logs are not forwarded to embedded control hardware.
+9. **Requested and executed behavior are logged separately.** Safety clamps and substitutions must be visible in the data.
 
 See [`docs/safety.md`](docs/safety.md) for the current public safety boundary.
 
