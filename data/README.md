@@ -18,3 +18,5 @@ Do not commit:
 Missing values are `null`, not zero.
 
 Keep original experiment records. Convert to LeRobot or another downstream format with an exporter rather than replacing the source data.
+
+The `examples/` directory may contain generated or sanitized example sessions used to test the logging pipeline.

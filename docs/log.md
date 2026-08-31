@@ -10,7 +10,10 @@
 - Added optional identity and wearable physiology as higher-level context only.
 - Explicitly separated recognition from authorization.
 - Started a deeper tactile-HRI prior-art review.
-- Hardware has not been purchased or tested yet.
+- Added a provisional pre-hardware wiring plan.
+- Added an ESP32 firmware skeleton with simulated sensing and separated sensor/event/safety/output modules.
+- Added a host-side Python logger and generated a schema-v0.3 simulated session.
+- Hardware has not been purchased or physically tested yet.
 
 ### Open questions
 
@@ -18,3 +21,4 @@
 - What thermal response range is noticeable without becoming uncomfortable?
 - What response vocabulary is useful before the action space is frozen?
 - Which tactile-HRI systems already combine context, history, learned response selection, and physical reciprocity?
+- Which exact board, sensors, heater, driver, and independent cutoff will be used for the first physical build?

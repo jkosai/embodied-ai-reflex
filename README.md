@@ -17,9 +17,17 @@ The local controller owns actuator safety limits. A higher-level agent may reque
 
 ## Current status
 
-**Specification / procurement.**
+**Pre-hardware implementation / procurement.**
 
-No hardware results are claimed yet.
+The repository now includes:
+
+- a provisional wiring plan
+- an ESP32 firmware skeleton with simulated sensor input
+- separated sensing, event classification, safety, and output modules
+- a host-side Python logger
+- a schema-v0.3 simulated JSONL session
+
+No physical hardware results are claimed yet.
 
 Current V0 scope:
 
@@ -33,6 +41,19 @@ Current V0 scope:
 - later higher-level agent integration
 
 Whole-body robotics, learned reflex control, and autonomous humanoid behavior are out of scope for V0.
+
+## Run the pre-hardware logger
+
+No hardware is required:
+
+```powershell
+cd host
+python logger.py --simulate --output ..\data\examples\v0_simulated_session.jsonl
+```
+
+The logger writes canonical schema-v0.3 records.
+
+See [`host/README.md`](host/README.md).
 
 ## First questions
 
@@ -69,15 +90,28 @@ See [`docs/interoperability.md`](docs/interoperability.md).
 .
 ├── README.md
 ├── firmware/
+│   ├── platformio.ini
+│   ├── main.cpp
+│   ├── sensors.*
+│   ├── events.*
+│   ├── outputs.*
+│   └── safety.*
+├── host/
+│   ├── README.md
+│   └── logger.py
 ├── data/
 │   ├── README.md
-│   └── schema.md
+│   ├── schema.md
+│   └── examples/
+│       └── v0_simulated_session.jsonl
 └── docs/
     ├── experiment-v0.md
     ├── interoperability.md
     ├── log.md
+    ├── prior-art.md
     ├── research-principles.md
-    └── safety.md
+    ├── safety.md
+    └── wiring-v0.md
 ```
 
 ## Related work
@@ -97,4 +131,4 @@ Current references include:
 - Ai2 MolmoAct 2  
   https://allenai.org/blog/molmoact2
 
-A deeper tactile-HRI prior-art map is in progress.
+See [`docs/prior-art.md`](docs/prior-art.md) for the preliminary tactile-HRI map.
