@@ -7,10 +7,7 @@ Experimental hardware/software for testing context-sensitive physical responses 
 V0 is a small benchtop touch/thermal prototype.
 
 ```text
-touch sensors -> local event classification -> bounded response -> log
-                                      ^
-                                      |
-                         higher-level agent request
+sensor input -> classified event -> requested response -> safety evaluation -> executed response -> log
 ```
 
 The local controller owns actuator safety limits. A higher-level agent may request from a restricted response set, but it does not directly control heater power, motor torque, or other unrestricted actuator values.
@@ -25,7 +22,8 @@ The repository now includes:
 - an ESP32 firmware skeleton with simulated sensor input
 - separated sensing, event classification, safety, and output modules
 - a host-side Python logger
-- a schema-v0.3 simulated JSONL session
+- schema-v0.4 simulated JSONL sessions for fixed/context-sensitive trials and safety rejection
+- explicit requested, safety-approved, and actually executed response fields
 
 No physical hardware results are claimed yet.
 
@@ -48,10 +46,12 @@ No hardware is required:
 
 ```powershell
 cd host
-python logger.py --simulate --output ..\data\examples\v0_simulated_session.jsonl
+python logger.py --simulate --condition context_sensitive --trial-id trial-B --output ..\data\raw\trial-B.jsonl
 ```
 
-The logger writes canonical schema-v0.3 records.
+The logger writes canonical schema-v0.4 records and refuses to overwrite existing trial files.
+Simulation reports `executed_response: null`, `physically_executed: false`, and zero heater output.
+Safety approval is recorded separately and never treated as evidence of physical execution.
 
 See [`host/README.md`](host/README.md).
 
@@ -94,11 +94,14 @@ See [`docs/interoperability.md`](docs/interoperability.md).
 │   ├── main.cpp
 │   ├── sensors.*
 │   ├── events.*
+│   ├── responses.*
 │   ├── outputs.*
 │   └── safety.*
 ├── host/
 │   ├── README.md
-│   └── logger.py
+│   ├── logger.py
+│   ├── pipeline.py
+│   └── test_pipeline.py
 ├── data/
 │   ├── README.md
 │   ├── schema.md
@@ -113,6 +116,18 @@ See [`docs/interoperability.md`](docs/interoperability.md).
     ├── safety.md
     └── wiring-v0.md
 ```
+
+See [`docs/experiment-v0.md`](docs/experiment-v0.md) for the public protocol and
+[`data/schema.md`](data/schema.md) for fields, units, and v0.3 migration notes.
+
+Run software checks from the repository root:
+
+```powershell
+python -m unittest discover -s host -v
+pio run -d firmware
+```
+
+Both firmware conditions are simulation-only builds. No heater GPIO or validated thermal controller is implemented.
 
 ## Related work
 

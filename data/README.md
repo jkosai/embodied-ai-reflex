@@ -20,3 +20,13 @@ Missing values are `null`, not zero.
 Keep original experiment records. Convert to LeRobot or another downstream format with an exporter rather than replacing the source data.
 
 The `examples/` directory may contain generated or sanitized example sessions used to test the logging pipeline.
+
+The committed v0.4 examples are entirely synthetic:
+
+- `v0_simulated_session.jsonl`: context-sensitive normal trace.
+- `v0_simulated_fixed.jsonl`: the same input trace under the fixed condition.
+- `v0_simulated_safety_rejection.jsonl`: context-sensitive request rejected by the temperature guard.
+
+Run `python host/generate_examples.py` from the repository root to regenerate these three fixtures only.
+Unlike the trial logger, this dedicated command intentionally replaces the named synthetic examples.
+Every example reports no physical execution and zero heater output. They are not experiment results.

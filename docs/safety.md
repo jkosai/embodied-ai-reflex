@@ -25,6 +25,27 @@ It may not directly set unrestricted actuator values.
 
 Requested and executed responses are logged separately so clamps, substitutions, and rejections remain visible.
 
+The public V0 pipeline also preserves `safety.approved_response` between request and execution.
+The non-actuating output adapter reports `executed_response: null`, `physically_executed: false`, and
+`heater_output: 0` even when safety approves a warming request. The logger never substitutes approval for execution.
+
+## Current simulation guards
+
+The firmware and host reference reject invalid/non-finite/out-of-range sensor data, excessive input,
+temperature at or above a simulation fixture limit, continuous heating intent beyond a fixture timeout,
+manual-stop input, and unavailable communication. `MAINTAIN` counts as heating, and changing heating
+response names cannot reset the timeout. Faults latch until explicit controller reinitialization.
+Safety does not receive the experimental condition and its limits are identical in both modes.
+
+The 35°C temperature threshold and five-second intent timeout are public simulation fixtures only.
+They are not validated contact limits or unpublished calibration values. The output adapter has no heater GPIO.
+Manual-stop and communication flags are injected test inputs; the firmware currently has no shutdown wiring,
+sensor freshness watchdog, remote-agent transport, or heartbeat monitor. No software test verifies physical safety.
+
+Real hardware integration must implement and measure those inputs, closed-loop thermal control and output
+feedback, startup-off behavior, independent cutoff, and off-body fault tests before human-contact trials.
+Resetting a latched fault requires operator investigation; response selection cannot authorize a reset.
+
 ## Identity
 
 Recognition and authorization are separate.

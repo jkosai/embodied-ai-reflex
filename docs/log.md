@@ -1,5 +1,14 @@
 # Development Log
 
+## 2026-09-03
+
+- Formalized sensor → classified event → request → safety evaluation → execution → log.
+- Added fixed/context-sensitive response selection and the public trial protocol.
+- Versioned logging to v0.4 with configurable trial/session metadata, condition/mode separation,
+  raw/filtered sensor fields, intensity, confidence, surface temperature, and heater state.
+- Preserved requested, safety-approved, and output-reported executed responses independently.
+- Added deterministic simulation and fault tests; physical execution remains disabled.
+
 ## 2026-08-30
 
 - Narrowed V0 to a small touch/thermal benchtop prototype.

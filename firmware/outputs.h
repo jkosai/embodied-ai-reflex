@@ -1,31 +1,19 @@
 #pragma once
-#include "events.h"
-
-enum class RequestedResponse {
-  NONE,
-  WARM_LOW,
-  WARM_MEDIUM,
-  MOTOR_AWAY
-};
-
-struct SafetyDecision {
-  RequestedResponse approved_response;
-  bool intervention;
-  const char* reason;
-};
+#include "responses.h"
 
 struct ExecutedResponse {
   RequestedResponse response;
   bool executed;
+  float heater_output;
+  bool safe_state_entered;
 };
 
 void outputs_init();
-RequestedResponse choose_local_demo_response(ContactEvent event);
 ExecutedResponse outputs_execute(const SafetyDecision& decision);
-const char* response_name(RequestedResponse response);
 
 void emit_serial_frame(
   const SensorFrame& frame,
+  Condition condition,
   ContactEvent event,
   RequestedResponse requested,
   const SafetyDecision& decision,

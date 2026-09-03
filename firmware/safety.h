@@ -1,6 +1,6 @@
 #pragma once
 #include "sensors.h"
-#include "outputs.h"
+#include "responses.h"
 
 void safety_init();
 SafetyDecision safety_validate(

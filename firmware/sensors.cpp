@@ -1,4 +1,5 @@
 #include <Arduino.h>
+#include <math.h>
 #include "sensors.h"
 
 static float simulated_force = 0.0f;
@@ -25,6 +26,9 @@ SensorFrame sensors_read() {
   if (!touching) contact_start_ms = 0;
 
   SensorFrame f;
+  f.timestamp_ms = millis();
+  f.raw_sensor_value = simulated_force;
+  f.filtered_sensor_value = simulated_force; // Explicit passthrough until calibration.
   f.capacitance = touching ? 0.7f : 0.1f;
   f.force = simulated_force;
   f.force_rate = simulated_force - previous_force;
@@ -33,7 +37,17 @@ SensorFrame sensors_read() {
       ? (millis() - contact_start_ms) / 1000.0f
       : 0.0f;
   f.valid = true;
+  f.communication_ok = true; // Local simulation, not a real heartbeat monitor.
+  f.manual_stop = false; // Test fixture; real shutdown input is not wired yet.
 
   previous_force = simulated_force;
   return f;
+}
+
+bool sensors_valid(const SensorFrame& f) {
+  return f.valid && isfinite(f.raw_sensor_value) && isfinite(f.filtered_sensor_value)
+      && isfinite(f.force_rate) && isfinite(f.temperature_c) && isfinite(f.contact_duration_s)
+      && f.raw_sensor_value >= 0 && f.raw_sensor_value <= 1
+      && f.filtered_sensor_value >= 0 && f.filtered_sensor_value <= 1
+      && f.temperature_c >= -10 && f.temperature_c <= 80 && f.contact_duration_s >= 0;
 }

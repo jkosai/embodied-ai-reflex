@@ -3,9 +3,13 @@
 
 enum class ContactEvent {
   NONE,
-  LIGHT_CONTACT,
-  SUSTAINED_CONTACT,
-  RAPID_OR_HIGH_FORCE,
+  CONTACT_START,
+  TAP,
+  PRESS,
+  SUSTAINED_HOLD,
+  STROKE, // Reserved; current single-force classifier cannot establish strokes.
+  EXCESSIVE_INPUT,
+  INVALID_INPUT,
   RELEASE
 };
 

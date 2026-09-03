@@ -1,7 +1,15 @@
+#include <Arduino.h>
 #include "sensors.h"
 #include "events.h"
 #include "outputs.h"
 #include "safety.h"
+
+// Rebuild/reboot between conditions; the host checks this device-reported value.
+#ifdef V0_FIXED_CONDITION
+static const Condition condition = Condition::FIXED;
+#else
+static const Condition condition = Condition::CONTEXT_SENSITIVE;
+#endif
 
 void setup() {
   Serial.begin(115200);
@@ -14,10 +22,10 @@ void setup() {
 void loop() {
   SensorFrame frame = sensors_read();
   ContactEvent event = classify_contact(frame);
-  RequestedResponse requested = choose_local_demo_response(event);
+  RequestedResponse requested = choose_response(event, condition);
   SafetyDecision decision = safety_validate(requested, frame);
   ExecutedResponse executed = outputs_execute(decision);
 
-  emit_serial_frame(frame, event, requested, decision, executed);
+  emit_serial_frame(frame, condition, event, requested, decision, executed);
   delay(100);
 }
